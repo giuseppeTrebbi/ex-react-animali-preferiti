@@ -32,15 +32,20 @@
             )
         }
 
+
         const ReactApp = () => {
             const [animals, setAnimals] = useState([])
             const [show, setShow] = useState(false)
             const [newAnimal, setNewAnimal] = useState("")
 
 
-            function AggiungiAnimale(animale) {
-                setAnimals([...animals, animale])
+            async function AggiungiAnimale(animale) {
+                const results = await fetch(`http://localhost:3333/animals?search=${animale}`)
+                const obj = await results.json()
+                if(!obj.length) return
+                setAnimals([...animals, { name: obj[0].name, description: obj[0].description, image: obj[0].image }])
             }
+
 
             return (
                 <div>
@@ -61,7 +66,15 @@
                         <ul>
                             {
                                 animals.map((animale, index) => (
-                                    <li key={index}>{animale}</li>
+                                    <li key={index}>
+                                        <div className="card">
+                                            <img src={animale.image} />
+                                                <div className="container">
+                                                    <h4><b>{animale.name}</b></h4>
+                                                    <p>{animale.description}</p>
+                                                </div>
+                                        </div>
+                                    </li>
                                 ))
                             }
                         </ul>
